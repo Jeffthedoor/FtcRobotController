@@ -47,24 +47,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  */
 //@Disabled
 @TeleOp(name="Wobble_Pickup", group="Final")
-public class wobble_Goal_Pickup extends LinearOpMode {
+public class wobble_Goal_Pickup_Teleop extends LinearOpMode {
     private DcMotor wobbleMotor;
     Servo wobbleServo;
 
     private ElapsedTime Timer = new ElapsedTime();
 
-    private double FkP = 0.5; //0.012
-    private double FkI = 0.001; //0.001
-    private double FkD = 0.001;//0.001
 
-    private double FEV = 0;
-
+    boolean pressedOnce = false;
 
 
 
     @Override
     public void runOpMode() {
-        wobbleMotor = hardwareMap.get(DcMotor.class, "wobble_Goal_Motor");
+        wobbleMotor = hardwareMap.get(DcMotor.class, "Left");
         wobbleServo = hardwareMap.get(Servo.class, "wobble_Goal_Servo");
 
         Timer.reset();
@@ -72,26 +68,51 @@ public class wobble_Goal_Pickup extends LinearOpMode {
         waitForStart();
 
 
+        if(opModeIsActive()) {
+            Timer.reset();
+            while(Timer.seconds() < 0.25) {
+                wobbleMotor.setPower(-0.55);
+            }
+            wobbleMotor.setPower(0);
+
+            wobbleServo.setPosition(0);
+        }
+
         while (opModeIsActive()) {
 
-        while(Timer.seconds() < 1) {
-            wobbleMotor.setPower(1);
-        }
 
-        if(gamepad1.a) {
+//up
+
+        if(gamepad1.a && pressedOnce == false) {
+            pressedOnce = true;
+
             wobbleServo.setPosition(1);
 
-            while(Timer.seconds() < 1.5) {
-                wobbleMotor.setPower(-1);
-            }
-        }else {
-            wobbleServo.setPosition(-1);
+            sleep(500);
 
-            while(Timer.seconds() < 1) {
-                wobbleMotor.setPower(1);
+            Timer.reset();
+            while(Timer.seconds() < 0.53) {
+                wobbleMotor.setPower(0.9);
             }
+            wobbleMotor.setPower(0);
+
         }
+        //down
+            if(gamepad1.a && pressedOnce == true) {
+                pressedOnce = false;
 
+
+                Timer.reset();
+                while(Timer.seconds() < 0.17) {
+                    wobbleMotor.setPower(-0.55);
+                }
+
+                wobbleMotor.setPower(0);
+                sleep(500);
+                wobbleServo.setPosition(0);
+      //          sleep(500);
+
+            }
 
 
         }
